@@ -1,6 +1,6 @@
 import pymatgen as mg
 import json
-
+import numpy as np
 from pymatgen.electronic_structure.bandstructure import BandStructureSymmLine
 from pymatgen.ext.matproj import MPRester
 from pymatgen.electronic_structure.core import Spin
@@ -23,16 +23,26 @@ bs = a.get_bandstructure_by_material_id("mp-3748")
 # print(bs.get_vbm())
 
 
-# with open('a.json', 'r', encoding='UTF-8') as f:
-#     print(type(f.read()))
-#     s = f.read()
-#     json.dumps(s)
-#     d = json.loads(s)
-#     bs = BandStructureSymmLine.from_dict(d)
-# list1 = BandStructureSymmLine.as_dict(bs)
-# print(list1)
 print(type(bs))
-# print(type(list1))
+list1 = BandStructureSymmLine.as_dict(bs)
+# print(list1)
+print(type(list1))
 
-plotter = BSPlotter(bs)
-plotter.get_plot().show()
+# print(type(list1['vbm']['kpoint_index'][0]))
+
+
+# 检测int64转化为str
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.int64):
+            return int(obj)
+
+
+with open('structure.json', 'w') as f:
+    json.dump(list1, f, cls=NpEncoder)
+
+# plotter = BSPlotter(bs)
+# plotter.get_plot().show()
+
+
+
